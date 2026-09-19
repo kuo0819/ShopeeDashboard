@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shopee Picker V5</title>
+<style>
+body{font-family:system-ui,-apple-system,sans-serif;margin:0;background:#f5f6f8;color:#171717}
+header{position:sticky;top:0;background:#fff;border-bottom:1px solid #ddd;padding:14px 18px;z-index:2}
+h1{margin:0 0 10px;font-size:20px}.controls{display:flex;gap:8px;flex-wrap:wrap}
+input,select{padding:9px;border:1px solid #ccc;border-radius:8px;background:#fff}
+main{padding:16px}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px}
+.stat,.card{background:#fff;border:1px solid #e5e5e5;border-radius:12px;padding:12px}.stat b{font-size:22px;display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px}
+.card img{width:100%;aspect-ratio:1.4;object-fit:cover;border-radius:8px;background:#eee}
+.score{font-weight:800;font-size:20px}.muted{color:#666;font-size:13px}.name{font-weight:700;margin:6px 0;line-height:1.35}
+.badge{display:inline-block;padding:3px 7px;border-radius:999px;background:#f0f0f0;margin:2px;font-size:12px}
+a{color:#d44a1c;text-decoration:none}.row{display:flex;justify-content:space-between;gap:8px;align-items:center}
+</style></head><body>
+<header><h1>Shopee Picker V5</h1><div class="controls">
+<input id="q" placeholder="搜尋商品/分類">
+<select id="aff"><option value="">全部</option><option value="yes">可分潤</option><option value="no">待轉分潤</option></select>
+<select id="cat"><option value="">全部分類</option></select>
+<select id="sort"><option value="score">選品分數</option><option value="trend">成長</option><option value="sold">累積銷量</option><option value="monthly">近期銷量</option><option value="rating">評分</option></select>
+<input id="min" type="number" min="0" max="100" value="55" title="最低分數">
+<input id="minSold" type="number" min="0" value="0" title="最低累積銷量" placeholder="最低銷量">
+<span id="count" class="muted"></span>
+</div></header>
+<main><div class="stats" id="stats"></div><div class="grid" id="grid"></div></main>
+<script>
+Promise.all([fetch('products.json').then(r=>r.json()),fetch('snapshot.json').then(r=>r.json())]).then(([rows,snap])=>{
+const $=id=>document.getElementById(id);
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const safeUrl=v=>{try{const u=new URL(String(v||''));return /^https?:$/.test(u.protocol)?u.href:'#'}catch{return '#'}};
+$('stats').innerHTML=[
+['資料庫商品',snap.database_products],['本輪抓到',snap.captured_products],['可分潤',snap.affiliate_ready],
+['留言池',snap.threads_ready],['待轉分潤',snap.affiliate_queue],['高分商品',snap.high_score_products],
+['分類數',snap.category_count],['已掃分類',snap.category_completed],['更新時間',new Date(snap.generated_at).toLocaleString()]
+].map(x=>'<div class="stat"><span class="muted">'+x[0]+'</span><b>'+x[1]+'</b></div>').join('');
+const categories=[...new Set(rows.map(x=>(x.category_path||'未分類').split('>')[0].trim()).filter(Boolean))].sort();
+$('cat').innerHTML='<option value="">全部分類</option>'+categories.map(x=>'<option value="'+esc(x)+'">'+esc(x)+'</option>').join('');
+function render(){
+ const q=$('q').value.trim().toLowerCase(), aff=$('aff').value, cat=$('cat').value;
+ const min=+$('min').value||0, minSold=+$('minSold').value||0, sort=$('sort').value;
+ let list=rows.filter(x=>
+   x.selection_score>=min &&
+   (+x.historical_sold||0)>=minSold &&
+   (!q||(x.product_name+' '+x.category_path).toLowerCase().includes(q)) &&
+   (!aff||(aff==='yes')===!!x.affiliate_link) &&
+   (!cat||(x.category_path||'未分類').startsWith(cat))
+ );
+ const key={score:'selection_score',trend:'trend_score',sold:'historical_sold',monthly:'sold',rating:'rating'}[sort];
+ list.sort((a,b)=>(+b[key]||0)-(+a[key]||0));
+ $('count').textContent='符合 '+list.length+' 筆';
+ $('grid').innerHTML=list.slice(0,1000).map(x=>'<article class="card">'+
+ (x.image?'<img loading="lazy" src="'+safeUrl(x.image)+'">':'')+
+ '<div class="row"><span class="score">'+x.selection_score+'/100</span><span class="muted">成長 '+x.trend_score.toFixed(1)+'</span></div>'+
+ '<div class="name">'+esc(x.product_name)+'</div>'+
+ '<div class="muted">'+esc(x.category_path||'未分類')+'</div>'+
+ '<div><span class="badge">近期 '+x.sold+'</span><span class="badge">累積 '+x.historical_sold+'</span><span class="badge">⭐ '+x.rating.toFixed(2)+'</span></div>'+
+ '<div class="row" style="margin-top:8px"><b>NT$ '+Math.round(x.price)+'</b><a target="_blank" rel="noopener noreferrer" href="'+safeUrl(x.affiliate_link||x.link)+'">'+(x.affiliate_link?'分潤連結':'商品頁')+'</a></div>'+
+ '</article>').join('');
+}
+['q','aff','cat','sort','min','minSold'].forEach(id=>$(id).addEventListener('input',render));render();
+});
+</script></body></html>
