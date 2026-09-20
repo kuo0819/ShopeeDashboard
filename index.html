@@ -15,30 +15,112 @@
       <span id="dbCount" class="db-count">資料載入中…</span>
     </div>
     <div class="controls">
-      <input id="q" type="search" placeholder="搜尋全部商品 / 分類">
-      <select id="aff">
-        <option value="">全部狀態</option>
-        <option value="unknown">尚未判定</option>
-        <option value="queued">待測試</option>
-        <option value="verified">已驗證可分潤</option>
-        <option value="blocked">不可分潤</option>
-        <option value="retry">待重試</option>
-      </select>
-      <select id="cat"><option value="">全部分類</option></select>
-      <select id="sort">
-        <option value="score">選品分數</option>
-        <option value="trend">成長</option>
-        <option value="sold">累積銷量</option>
-        <option value="monthly">月銷量</option>
-        <option value="rating">評分</option>
-      </select>
-      <input id="min" type="number" min="0" max="100" value="55" title="最低選品分數" placeholder="最低分數">
-      <input id="minSold" type="number" min="0" value="0" title="最低累積銷量" placeholder="最低銷量">
-      <select id="perPage" title="每頁顯示數量">
-        <option value="20">每頁 20</option>
-        <option value="40">每頁 40</option>
-        <option value="80">每頁 80</option>
-      </select>
+      <div class="primary-controls">
+        <input id="q" type="search" placeholder="搜尋全部商品 / 分類">
+        <select id="aff">
+          <option value="">全部分潤狀態</option>
+          <option value="unknown">尚未判定</option>
+          <option value="queued">待測試</option>
+          <option value="verified">已驗證可分潤</option>
+          <option value="blocked">不可分潤</option>
+          <option value="retry">待重試</option>
+        </select>
+        <select id="cat"><option value="">全部分類</option></select>
+        <select id="sort">
+          <option value="score">排序：選品分數</option>
+          <option value="trend">排序：成長</option>
+          <option value="monthly">排序：月銷量</option>
+          <option value="sold">排序：累積銷量</option>
+          <option value="rating">排序：評分</option>
+          <option value="reviews">排序：評價數</option>
+          <option value="likes">排序：收藏數</option>
+          <option value="price_low">排序：價格低到高</option>
+          <option value="price_high">排序：價格高到低</option>
+          <option value="latest">排序：最近更新</option>
+        </select>
+        <button id="filterToggle" class="filter-toggle" type="button">更多篩選<span id="filterCount" class="filter-count"></span></button>
+      </div>
+
+      <div class="advanced-controls" id="advancedFilters">
+        <select id="shopType">
+          <option value="">全部店鋪</option>
+          <option value="mall">蝦皮商城</option>
+          <option value="preferred">優選賣家</option>
+          <option value="mall_or_preferred">商城或優選</option>
+          <option value="ordinary">一般賣家</option>
+        </select>
+        <select id="location"><option value="">全部地區</option></select>
+        <select id="priceRange">
+          <option value="">全部價格</option>
+          <option value="0-99">NT$0–99</option>
+          <option value="100-299">NT$100–299</option>
+          <option value="300-499">NT$300–499</option>
+          <option value="500-999">NT$500–999</option>
+          <option value="1000-1999">NT$1,000–1,999</option>
+          <option value="2000+">NT$2,000 以上</option>
+        </select>
+        <select id="monthlyMin">
+          <option value="0">月銷量不限</option>
+          <option value="10">月銷 ≥ 10</option>
+          <option value="50">月銷 ≥ 50</option>
+          <option value="100">月銷 ≥ 100</option>
+          <option value="500">月銷 ≥ 500</option>
+          <option value="1000">月銷 ≥ 1,000</option>
+          <option value="5000">月銷 ≥ 5,000</option>
+        </select>
+        <select id="soldMin">
+          <option value="0">累積銷量不限</option>
+          <option value="100">累積 ≥ 100</option>
+          <option value="500">累積 ≥ 500</option>
+          <option value="1000">累積 ≥ 1,000</option>
+          <option value="5000">累積 ≥ 5,000</option>
+          <option value="10000">累積 ≥ 10,000</option>
+          <option value="50000">累積 ≥ 50,000</option>
+        </select>
+        <select id="ratingMin">
+          <option value="0">評分不限</option>
+          <option value="4">評分 ≥ 4.0</option>
+          <option value="4.5">評分 ≥ 4.5</option>
+          <option value="4.7">評分 ≥ 4.7</option>
+          <option value="4.8">評分 ≥ 4.8</option>
+          <option value="4.9">評分 ≥ 4.9</option>
+        </select>
+        <select id="reviewMin">
+          <option value="0">評價數不限</option>
+          <option value="10">評價 ≥ 10</option>
+          <option value="50">評價 ≥ 50</option>
+          <option value="100">評價 ≥ 100</option>
+          <option value="500">評價 ≥ 500</option>
+          <option value="1000">評價 ≥ 1,000</option>
+        </select>
+        <select id="stockFilter">
+          <option value="">全部庫存狀態</option>
+          <option value="in">有庫存</option>
+          <option value="out">售罄</option>
+          <option value="unknown">庫存未知</option>
+        </select>
+        <select id="discountFilter">
+          <option value="">全部折扣狀態</option>
+          <option value="discounted">有折扣</option>
+          <option value="none">無折扣</option>
+        </select>
+        <select id="min">
+          <option value="0">選品分數不限</option>
+          <option value="40">分數 ≥ 40</option>
+          <option value="50">分數 ≥ 50</option>
+          <option value="55" selected>分數 ≥ 55</option>
+          <option value="60">分數 ≥ 60</option>
+          <option value="70">分數 ≥ 70</option>
+          <option value="80">分數 ≥ 80</option>
+          <option value="90">分數 ≥ 90</option>
+        </select>
+        <select id="perPage" title="每頁顯示數量">
+          <option value="20">每頁 20</option>
+          <option value="40">每頁 40</option>
+          <option value="80">每頁 80</option>
+        </select>
+        <button id="resetFilters" class="reset-filter" type="button">清除全部篩選</button>
+      </div>
     </div>
   </div>
 </header>

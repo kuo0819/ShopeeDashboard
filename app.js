@@ -60,33 +60,102 @@ Promise.all([
     return '<option value="'+esc(x)+'">'+esc(x)+'</option>';
   }).join('');
 
+  var locations=[...new Set(catalog.map(function(x){
+    return String(x.shop_location||'').trim();
+  }).filter(Boolean))].sort();
+  $('location').innerHTML='<option value="">全部地區</option>'+locations.map(function(x){
+    return '<option value="'+esc(x)+'">'+esc(x)+'</option>';
+  }).join('');
+
   function applyFilters(resetPage){
     var q=$('q').value.trim().toLowerCase();
     var aff=$('aff').value;
     var cat=$('cat').value;
+    var shopType=$('shopType').value;
+    var location=$('location').value;
+    var priceRange=$('priceRange').value;
+    var monthlyMin=Number($('monthlyMin').value||0);
+    var soldMin=Number($('soldMin').value||0);
+    var ratingMin=Number($('ratingMin').value||0);
+    var reviewMin=Number($('reviewMin').value||0);
+    var stockFilter=$('stockFilter').value;
+    var discountFilter=$('discountFilter').value;
     var min=Number($('min').value||0);
-    var minSold=Number($('minSold').value||0);
     var sort=$('sort').value;
+
+    function priceOk(price){
+      price=Number(price||0);
+      if(!priceRange)return true;
+      if(priceRange==='2000+')return price>=2000;
+      var parts=priceRange.split('-').map(Number);
+      return price>=parts[0]&&price<=parts[1];
+    }
+    function shopOk(x){
+      if(!shopType)return true;
+      var mall=Boolean(Number(x.is_mall||0));
+      var preferred=Boolean(Number(x.is_preferred||0));
+      if(shopType==='mall')return mall;
+      if(shopType==='preferred')return preferred;
+      if(shopType==='mall_or_preferred')return mall||preferred;
+      if(shopType==='ordinary')return !mall&&!preferred;
+      return true;
+    }
+    function stockOk(x){
+      if(!stockFilter)return true;
+      var stock=Number(x.stock);
+      if(stockFilter==='unknown')return stock<0||Number.isNaN(stock);
+      if(stockFilter==='out')return stock===0;
+      if(stockFilter==='in')return stock>0;
+      return true;
+    }
 
     filtered=catalog.filter(function(x){
       return Number(x.selection_score||0)>=min &&
-        Number(x.historical_sold||0)>=minSold &&
-        (!q||((x.product_name||'')+' '+(x.category_path||'')).toLowerCase().includes(q)) &&
+        Number(x.sold||0)>=monthlyMin &&
+        Number(x.historical_sold||0)>=soldMin &&
+        Number(x.rating||0)>=ratingMin &&
+        Number(x.rating_count||0)>=reviewMin &&
+        priceOk(x.price) &&
+        shopOk(x) &&
+        stockOk(x) &&
+        (!location||String(x.shop_location||'')===location) &&
+        (!discountFilter||
+          (discountFilter==='discounted'&&Number(x.discount||0)>0)||
+          (discountFilter==='none'&&Number(x.discount||0)<=0)) &&
+        (!q||((x.product_name||'')+' '+(x.category_path||'')+' '+(x.shop_location||'')).toLowerCase().includes(q)) &&
         (!aff||statusGroup(x)===aff) &&
         (!cat||(x.category_path||'未分類').startsWith(cat));
     });
 
     var key={
       score:'selection_score',trend:'trend_score',sold:'historical_sold',
-      monthly:'sold',rating:'rating'
+      monthly:'sold',rating:'rating',reviews:'rating_count',likes:'liked_count',
+      price_low:'price',price_high:'price',latest:'last_seen_at'
     }[sort]||'selection_score';
 
     filtered.sort(function(a,b){
+      if(sort==='price_low')return Number(a.price||0)-Number(b.price||0);
+      if(sort==='latest')return String(b.last_seen_at||'').localeCompare(String(a.last_seen_at||''));
       return Number(b[key]||0)-Number(a[key]||0);
     });
 
+    updateFilterCount();
     if(resetPage)currentPage=1;
     renderPage();
+  }
+
+  function updateFilterCount(){
+    var ids=['aff','cat','shopType','location','priceRange','monthlyMin','soldMin',
+      'ratingMin','reviewMin','stockFilter','discountFilter','min'];
+    var defaults={monthlyMin:'0',soldMin:'0',ratingMin:'0',reviewMin:'0',min:'55'};
+    var count=ids.reduce(function(total,id){
+      var value=String($(id).value||'');
+      var def=Object.prototype.hasOwnProperty.call(defaults,id)?defaults[id]:'';
+      return total+(value!==def?1:0);
+    },0);
+    var badge=$('filterCount');
+    badge.textContent=count?String(count):'';
+    badge.classList.toggle('show',count>0);
   }
 
   function renderPage(){
@@ -313,13 +382,38 @@ Promise.all([
   $('detailModal').addEventListener('click',function(e){if(e.target===$('detailModal'))closeDetail()});
   document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDetail()});
 
-  ['aff','cat','sort','min','minSold'].forEach(function(id){
+  ['aff','cat','sort','shopType','location','priceRange','monthlyMin','soldMin',
+    'ratingMin','reviewMin','stockFilter','discountFilter','min'].forEach(function(id){
     $(id).addEventListener('change',function(){applyFilters(true)});
   });
   $('perPage').addEventListener('change',function(){
     perPage=Number($('perPage').value||40);
     currentPage=1;
     renderPage();
+  });
+  $('filterToggle').addEventListener('click',function(){
+    var panel=$('advancedFilters');
+    var open=panel.classList.toggle('open');
+    $('filterToggle').childNodes[0].nodeValue=open?'收起篩選':'更多篩選';
+  });
+  $('resetFilters').addEventListener('click',function(){
+    $('q').value='';
+    $('aff').value='';
+    $('cat').value='';
+    $('sort').value='score';
+    $('shopType').value='';
+    $('location').value='';
+    $('priceRange').value='';
+    $('monthlyMin').value='0';
+    $('soldMin').value='0';
+    $('ratingMin').value='0';
+    $('reviewMin').value='0';
+    $('stockFilter').value='';
+    $('discountFilter').value='';
+    $('min').value='55';
+    perPage=window.innerWidth<=720?20:40;
+    $('perPage').value=String(perPage);
+    applyFilters(true);
   });
   $('q').addEventListener('input',function(){
     clearTimeout(searchTimer);
