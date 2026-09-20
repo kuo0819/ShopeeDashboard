@@ -1,61 +1,61 @@
 <!doctype html>
-<html lang="zh-Hant"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Shopee 選品 V5</title>
-<style>
-body{font-family:system-ui,-apple-system,sans-serif;margin:0;background:#f5f6f8;color:#171717}
-header{position:sticky;top:0;background:#fff;border-bottom:1px solid #ddd;padding:14px 18px;z-index:2}
-h1{margin:0 0 10px;font-size:20px}.controls{display:flex;gap:8px;flex-wrap:wrap}
-input,select{padding:9px;border:1px solid #ccc;border-radius:8px;background:#fff}
-main{padding:16px}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px}
-.stat,.card{background:#fff;border:1px solid #e5e5e5;border-radius:12px;padding:12px}.stat b{font-size:22px;display:block}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px}
-.card img{width:100%;aspect-ratio:1.4;object-fit:cover;border-radius:8px;background:#eee}
-.score{font-weight:800;font-size:20px}.muted{color:#666;font-size:13px}.name{font-weight:700;margin:6px 0;line-height:1.35}
-.badge{display:inline-block;padding:3px 7px;border-radius:999px;background:#f0f0f0;margin:2px;font-size:12px}
-a{color:#d44a1c;text-decoration:none}.row{display:flex;justify-content:space-between;gap:8px;align-items:center}
-.card{cursor:pointer;transition:transform .12s ease,box-shadow .12s ease}.card:hover{transform:translateY(-1px);box-shadow:0 5px 18px rgba(0,0,0,.08)}
-.detail-btn{border:1px solid #ddd;background:#fff;border-radius:8px;padding:6px 9px;cursor:pointer}
-.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.48);z-index:20;padding:24px;overflow:auto}
-.modal.open{display:block}.modal-panel{max-width:920px;margin:2vh auto;background:#fff;border-radius:16px;padding:18px;box-shadow:0 18px 60px rgba(0,0,0,.25)}
-.modal-head{display:flex;gap:14px;justify-content:space-between;align-items:flex-start}.modal-head h2{margin:0;font-size:20px;line-height:1.35}
-.close{border:0;background:#f1f1f1;border-radius:999px;width:36px;height:36px;font-size:20px;cursor:pointer}
-.detail-top{display:grid;grid-template-columns:minmax(220px,320px) 1fr;gap:18px;margin-top:14px}
-.detail-top img{width:100%;border-radius:12px;background:#eee;aspect-ratio:1/1;object-fit:cover}
-.detail-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
-.detail-item{background:#f7f7f8;border:1px solid #ececec;border-radius:10px;padding:10px}.detail-item span{display:block;color:#666;font-size:12px}.detail-item b{display:block;margin-top:3px;font-size:16px;word-break:break-word}
-.detail-section{margin-top:16px}.detail-section h3{margin:0 0 8px;font-size:15px}.links{display:flex;gap:10px;flex-wrap:wrap}.linkbtn{display:inline-block;padding:8px 11px;border-radius:8px;background:#fff3ee;border:1px solid #ffd4c4}
-.chart-box{border:1px solid #ececec;border-radius:12px;padding:10px;background:#fff;margin-top:10px}
-.chart-title{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:8px}
-.chart-title b{font-size:14px}.chart-title span{font-size:12px;color:#666}
-.chart-svg{width:100%;height:220px;display:block;color:#d44a1c}
-.chart-grid{stroke:#e7e7e7;stroke-width:1}.chart-line{fill:none;stroke:currentColor;stroke-width:2.5}
-.chart-dot{fill:currentColor}.chart-axis{fill:#777;font-size:11px}
-.history-table-wrap{overflow:auto;margin-top:10px;border:1px solid #ececec;border-radius:10px}
-.history-table{width:100%;border-collapse:collapse;font-size:12px;min-width:640px}
-.history-table th,.history-table td{padding:7px 9px;border-bottom:1px solid #eee;text-align:right;white-space:nowrap}
-.history-table th:first-child,.history-table td:first-child{text-align:left}
-.history-table tr:last-child td{border-bottom:0}
-.empty-chart{padding:22px;text-align:center;color:#777;background:#fafafa;border-radius:10px}
-@media(max-width:720px){.detail-top{grid-template-columns:1fr}.detail-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.chart-svg{height:190px}}
-</style></head><body>
-<header><h1>Shopee 選品 V5</h1><div class="controls">
-<input id="q" placeholder="搜尋商品/分類">
-<select id="aff">
-<option value="">全部狀態</option>
-<option value="unknown">尚未判定</option>
-<option value="queued">待測試</option>
-<option value="verified">已驗證可分潤</option>
-<option value="blocked">不可分潤</option>
-<option value="retry">待重試</option>
-</select>
-<select id="cat"><option value="">全部分類</option></select>
-<select id="sort"><option value="score">選品分數</option><option value="trend">成長</option><option value="sold">累積銷量</option><option value="monthly">近期銷量</option><option value="rating">評分</option></select>
-<input id="min" type="number" min="0" max="100" value="55" title="最低分數">
-<input id="minSold" type="number" min="0" value="0" title="最低累積銷量" placeholder="最低銷量">
-<span id="count" class="muted"></span>
-</div></header>
-<main><div class="stats" id="stats"></div><div class="grid" id="grid"></div></main>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <title>Shopee 選品 V5</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <div class="topline">
+      <h1>Shopee 選品 V5</h1>
+      <span id="dbCount" class="db-count">資料載入中…</span>
+    </div>
+    <div class="controls">
+      <input id="q" type="search" placeholder="搜尋全部商品 / 分類">
+      <select id="aff">
+        <option value="">全部狀態</option>
+        <option value="unknown">尚未判定</option>
+        <option value="queued">待測試</option>
+        <option value="verified">已驗證可分潤</option>
+        <option value="blocked">不可分潤</option>
+        <option value="retry">待重試</option>
+      </select>
+      <select id="cat"><option value="">全部分類</option></select>
+      <select id="sort">
+        <option value="score">選品分數</option>
+        <option value="trend">成長</option>
+        <option value="sold">累積銷量</option>
+        <option value="monthly">月銷量</option>
+        <option value="rating">評分</option>
+      </select>
+      <input id="min" type="number" min="0" max="100" value="55" title="最低選品分數" placeholder="最低分數">
+      <input id="minSold" type="number" min="0" value="0" title="最低累積銷量" placeholder="最低銷量">
+      <select id="perPage" title="每頁顯示數量">
+        <option value="20">每頁 20</option>
+        <option value="40">每頁 40</option>
+        <option value="80">每頁 80</option>
+      </select>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="stats" id="stats"></div>
+  <div class="resultbar">
+    <span id="resultText">商品載入中…</span>
+    <span id="pageText"></span>
+  </div>
+  <div class="grid" id="grid"><div class="loading">正在載入商品索引…</div></div>
+  <div class="pagination-wrap">
+    <div class="pagination" id="pagination"></div>
+    <div class="page-meta">只渲染目前頁面，完整資料仍可搜尋與分頁瀏覽。</div>
+  </div>
+</main>
+
 <div class="modal" id="detailModal" aria-hidden="true">
   <div class="modal-panel">
     <div class="modal-head">
@@ -65,218 +65,6 @@ a{color:#d44a1c;text-decoration:none}.row{display:flex;justify-content:space-bet
     <div id="detailBody"></div>
   </div>
 </div>
-<script>
-Promise.all([fetch('products.json').then(r=>r.json()),fetch('snapshot.json').then(r=>r.json())]).then(([rows,snap])=>{
-const $=id=>document.getElementById(id);
-const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const safeUrl=v=>{try{const u=new URL(String(v||''));return /^https?:$/.test(u.protocol)?u.href:'#'}catch{return '#'}};
-const num=v=>Number(v||0).toLocaleString('zh-TW');
-const money=v=>'NT$ '+Number(v||0).toLocaleString('zh-TW',{maximumFractionDigits:2});
-const dt=v=>{if(!v)return '-';const d=new Date(v);return Number.isNaN(d.getTime())?esc(v):d.toLocaleString('zh-TW')};
-const yesno=v=>v?'是':'否';
-$('stats').innerHTML=[
-['資料庫商品',snap.database_products],['本輪抓到',snap.captured_products],
-['尚未判定',snap.affiliate_unknown],['待測試',snap.affiliate_queued],
-['已驗證可分潤',snap.affiliate_ready],['不可分潤',snap.affiliate_not_convertible],
-['待重試',snap.affiliate_retry],['留言池',snap.threads_ready],
-['高分商品',snap.high_score_products],['分類數',snap.category_count],
-['已掃分類',snap.category_completed],['更新時間',new Date(snap.generated_at).toLocaleString()]
-].map(x=>'<div class="stat"><span class="muted">'+x[0]+'</span><b>'+x[1]+'</b></div>').join('');
-const categories=[...new Set(rows.map(x=>(x.category_path||'未分類').split('>')[0].trim()).filter(Boolean))].sort();
-$('cat').innerHTML='<option value="">全部分類</option>'+categories.map(x=>'<option value="'+esc(x)+'">'+esc(x)+'</option>').join('');
-const statusGroup=x=>{
- const s=String(x.affiliate_status||'unknown');
- if(s==='verified') return 'verified';
- if(['not_convertible','wrong_destination','help_center'].includes(s)) return 'blocked';
- if(['retry','verification_failed'].includes(s)) return 'retry';
- if(s==='queued') return 'queued';
- return 'unknown';
-};
-const statusLabel=x=>({
- unknown:'🟡 尚未判定',
- queued:'🟠 待測試',
- verified:'🟢 已驗證可分潤',
- blocked:'🔴 不可分潤',
- retry:'🔵 待重試'
-}[statusGroup(x)]||'尚未判定');
-function render(){
- const q=$('q').value.trim().toLowerCase(), aff=$('aff').value, cat=$('cat').value;
- const min=+$('min').value||0, minSold=+$('minSold').value||0, sort=$('sort').value;
- let list=rows.filter(x=>
-   x.selection_score>=min &&
-   (+x.historical_sold||0)>=minSold &&
-   (!q||(x.product_name+' '+x.category_path).toLowerCase().includes(q)) &&
-   (!aff||statusGroup(x)===aff) &&
-   (!cat||(x.category_path||'未分類').startsWith(cat))
- );
- const key={score:'selection_score',trend:'trend_score',sold:'historical_sold',monthly:'sold',rating:'rating'}[sort];
- list.sort((a,b)=>(+b[key]||0)-(+a[key]||0));
- $('count').textContent='符合 '+list.length+' 筆';
- $('grid').innerHTML=list.slice(0,1000).map(x=>'<article class="card" data-key="'+esc(x.canonical_key)+'">'+
- (x.image?'<img loading="lazy" src="'+safeUrl(x.image)+'">':'')+
- '<div class="row"><span class="score">'+x.selection_score+'/100</span><span class="muted">成長 '+Number(x.trend_score||0).toFixed(1)+'</span></div>'+
- '<div class="name">'+esc(x.product_name)+'</div>'+
- '<div class="muted">'+esc(x.category_path||'未分類')+'</div>'+
- '<div><span class="badge">'+statusLabel(x)+'</span><span class="badge">月銷 '+num(x.sold)+'</span><span class="badge">累積 '+num(x.historical_sold)+'</span><span class="badge">⭐ '+Number(x.rating||0).toFixed(2)+' ('+num(x.rating_count)+')</span></div>'+
- '<div class="row" style="margin-top:8px"><b>'+money(x.price)+'</b><button class="detail-btn" type="button" data-detail="'+esc(x.canonical_key)+'">詳細數據</button></div>'+
- '</article>').join('');
-
- document.querySelectorAll('[data-detail]').forEach(btn=>btn.addEventListener('click',e=>{
-   e.stopPropagation();
-   const key=btn.getAttribute('data-detail');
-   const row=rows.find(r=>r.canonical_key===key);
-   if(row) openDetail(row);
- }));
- document.querySelectorAll('.card[data-key]').forEach(card=>card.addEventListener('click',()=>{
-   const key=card.getAttribute('data-key');
-   const row=rows.find(r=>r.canonical_key===key);
-   if(row) openDetail(row);
- }));
-}
-function openDetail(x){
- $('detailTitle').textContent=x.product_name||'商品詳細資料';
- const stockText=Number(x.stock)===-1?'未知':num(x.stock);
- const priceRange=(Number(x.price_min||0)||Number(x.price_max||0))
-   ? money(x.price_min||x.price)+' ～ '+money(x.price_max||x.price)
-   : money(x.price);
- const sources=Array.isArray(x.sources)?x.sources.join('\\n'):'';
- const keywords=Array.isArray(x.keywords)?x.keywords.join('、'):'';
- $('detailBody').innerHTML=
-   '<div class="detail-top">'+
-     '<div>'+(x.image?'<img src="'+safeUrl(x.image)+'">':'')+'</div>'+
-     '<div>'+
-       '<div class="muted">'+esc(x.category_path||'未分類')+'</div>'+
-       '<div style="margin-top:8px"><span class="badge">'+statusLabel(x)+'</span>'+
-       (x.is_mall?'<span class="badge">商城</span>':'')+
-       (x.is_preferred?'<span class="badge">優選</span>':'')+'</div>'+
-       '<div class="detail-grid">'+
-         detailItem('選品分數',Number(x.selection_score||0).toFixed(2)+'/100')+
-         detailItem('趨勢分數',Number(x.trend_score||0).toFixed(2))+
-         detailItem('月銷量 / 近期銷量',num(x.sold))+
-         detailItem('累積銷量',num(x.historical_sold))+
-         detailItem('收藏數',num(x.liked_count))+
-         detailItem('評分',Number(x.rating||0).toFixed(3))+
-         detailItem('評價數',num(x.rating_count))+
-         detailItem('目前售價',money(x.price))+
-         detailItem('價格區間',priceRange)+
-         detailItem('折扣前價格',money(x.price_before_discount))+
-         detailItem('折扣',num(x.discount))+
-         detailItem('庫存',stockText)+
-         detailItem('商城',yesno(x.is_mall))+
-         detailItem('優選賣家',yesno(x.is_preferred))+
-         detailItem('賣家地區',x.shop_location||'-')+
-       '</div>'+
-     '</div>'+
-   '</div>'+
-   '<div class="detail-section"><h3>商品識別</h3><div class="detail-grid">'+
-     detailItem('商店 ID',x.shop_id||'-')+
-     detailItem('商品 ID',x.item_id||'-')+
-     detailItem('分類 ID',x.category_id||'-')+
-     detailItem('商品唯一鍵',x.canonical_key||'-')+
-     detailItem('首次發現',dt(x.first_seen_at))+
-     detailItem('最後更新',dt(x.last_seen_at))+
-   '</div></div>'+
-   '<div class="detail-section"><h3>分潤狀態</h3><div class="detail-grid">'+
-     detailItem('狀態',statusLabel(x))+
-     detailItem('嘗試次數',num(x.affiliate_attempts))+
-     detailItem('原因',x.affiliate_status_reason||'-')+
-   '</div></div>'+
-   '<div class="detail-section"><h3>歷史銷量變化</h3>'+historySection(x)+'</div>'+
-   '<div class="detail-section"><h3>關鍵字</h3><div class="muted">'+esc(keywords||'-')+'</div></div>'+
-   '<div class="detail-section"><h3>來源</h3><div class="muted" style="white-space:pre-wrap">'+esc(sources||'-')+'</div></div>'+
-   '<div class="detail-section"><h3>連結</h3><div class="links">'+
-     '<a class="linkbtn" target="_blank" rel="noopener noreferrer" href="'+safeUrl(x.link)+'">開啟商品頁</a>'+
-     (x.affiliate_link?'<a class="linkbtn" target="_blank" rel="noopener noreferrer" href="'+safeUrl(x.affiliate_link)+'">開啟分潤連結</a>':'')+
-   '</div></div>';
- $('detailModal').classList.add('open');
- $('detailModal').setAttribute('aria-hidden','false');
-}
-function historySection(x){
- const h=Array.isArray(x.sales_history)?x.sales_history:[];
- if(h.length<2){
-   return '<div class="empty-chart">目前歷史資料不足。V5 每次重新抓到這個商品後，圖表會逐步累積。</div>';
- }
- const first=h[0], last=h[h.length-1];
- const cumulativeDelta=Math.max(0,Number(last.historical_sold||0)-Number(first.historical_sold||0));
- const monthlyDelta=Number(last.sold||0)-Number(first.sold||0);
- const days=Math.max(1,Math.round((new Date(last.date)-new Date(first.date))/86400000));
- const avg=(cumulativeDelta/days);
- return ''+
-   '<div class="detail-grid">'+
-     detailItem('圖表期間',esc(first.date)+' ～ '+esc(last.date))+
-     detailItem('期間累積銷量增加','+'+num(cumulativeDelta))+
-     detailItem('平均每日累積增加',num(avg.toFixed(1)))+
-     detailItem('月銷量起點',num(first.sold))+
-     detailItem('月銷量最新',num(last.sold))+
-     detailItem('月銷量變化',(monthlyDelta>=0?'+':'')+num(monthlyDelta))+
-   '</div>'+
-   lineChart(h,'historical_sold','累積銷量')+
-   lineChart(h,'sold','月銷量 / 近期銷量')+
-   historyTable(h);
-}
-function lineChart(points,field,label){
- const values=points.map(p=>Number(p[field]||0));
- const min=Math.min(...values), max=Math.max(...values);
- const range=Math.max(1,max-min);
- const w=760,h=220,padL=62,padR=18,padT=16,padB=36;
- const iw=w-padL-padR, ih=h-padT-padB;
- const coords=points.map((p,i)=>{
-   const x=padL+(points.length===1?0:(i/(points.length-1))*iw);
-   const y=padT+ih-((Number(p[field]||0)-min)/range)*ih;
-   return {x,y,p};
- });
- const poly=coords.map(c=>c.x.toFixed(1)+','+c.y.toFixed(1)).join(' ');
- const yTicks=[0,0.5,1].map(t=>{
-   const value=Math.round(min+range*t);
-   const y=padT+ih-(t*ih);
-   return '<line class="chart-grid" x1="'+padL+'" y1="'+y+'" x2="'+(w-padR)+'" y2="'+y+'"></line>'+
-          '<text class="chart-axis" x="'+(padL-8)+'" y="'+(y+4)+'" text-anchor="end">'+esc(num(value))+'</text>';
- }).join('');
- const first=points[0], last=points[points.length-1];
- const dots=coords.map((c,i)=>'<circle class="chart-dot" cx="'+c.x+'" cy="'+c.y+'" r="'+(i===coords.length-1?4:2.4)+'"><title>'+esc(c.p.date)+'：'+esc(num(c.p[field]))+'</title></circle>').join('');
- return '<div class="chart-box">'+
-   '<div class="chart-title"><b>'+esc(label)+'</b><span>'+esc(first.date)+' → '+esc(last.date)+'</span></div>'+
-   '<svg class="chart-svg" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="'+esc(label)+'歷史變化">'+
-     yTicks+
-     '<polyline class="chart-line" points="'+poly+'"></polyline>'+
-     dots+
-     '<text class="chart-axis" x="'+padL+'" y="'+(h-10)+'" text-anchor="start">'+esc(first.date)+'</text>'+
-     '<text class="chart-axis" x="'+(w-padR)+'" y="'+(h-10)+'" text-anchor="end">'+esc(last.date)+'</text>'+
-   '</svg>'+
- '</div>';
-}
-function historyTable(points){
- const recent=[...points].reverse().slice(0,14);
- return '<div class="history-table-wrap"><table class="history-table"><thead><tr>'+
-   '<th>日期</th><th>月銷量</th><th>累積銷量</th><th>售價</th><th>收藏</th><th>評價數</th>'+
-   '</tr></thead><tbody>'+
-   recent.map(p=>'<tr>'+
-     '<td>'+esc(p.date)+'</td>'+
-     '<td>'+num(p.sold)+'</td>'+
-     '<td>'+num(p.historical_sold)+'</td>'+
-     '<td>'+money(p.price)+'</td>'+
-     '<td>'+num(p.liked_count)+'</td>'+
-     '<td>'+num(p.rating_count)+'</td>'+
-   '</tr>').join('')+
-   '</tbody></table></div>';
-}
-function detailItem(label,value){
- return '<div class="detail-item"><span>'+esc(label)+'</span><b>'+esc(value??'-')+'</b></div>';
-}
-$('detailClose').addEventListener('click',()=>closeDetail());
-$('detailModal').addEventListener('click',e=>{if(e.target===$('detailModal'))closeDetail()});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDetail()});
-function closeDetail(){
- $('detailModal').classList.remove('open');
- $('detailModal').setAttribute('aria-hidden','true');
-}
-['q','aff','cat','sort','min','minSold'].forEach(id=>$(id).addEventListener('input',render));render();
-}).catch(err=>{
- const main=document.querySelector('main');
- if(main){
-   main.innerHTML='<div class="stat"><b>儀表板載入失敗</b><div class="muted" style="margin-top:8px;white-space:pre-wrap">'+
-     String(err&&err.message?err.message:err)+'</div></div>';
- }
- console.error('Shopee Dashboard load failed:',err);
-});
-</script></body></html>
+<script src="app.js" defer></script>
+</body>
+</html>
