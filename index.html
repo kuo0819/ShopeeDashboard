@@ -139,8 +139,7 @@ function openDetail(x){
  const priceRange=(Number(x.price_min||0)||Number(x.price_max||0))
    ? money(x.price_min||x.price)+' ～ '+money(x.price_max||x.price)
    : money(x.price);
- const sources=Array.isArray(x.sources)?x.sources.join('
-'):'';
+ const sources=Array.isArray(x.sources)?x.sources.join('\\n'):'';
  const keywords=Array.isArray(x.keywords)?x.keywords.join('、'):'';
  $('detailBody').innerHTML=
    '<div class="detail-top">'+
@@ -272,5 +271,12 @@ function closeDetail(){
  $('detailModal').setAttribute('aria-hidden','true');
 }
 ['q','aff','cat','sort','min','minSold'].forEach(id=>$(id).addEventListener('input',render));render();
+}).catch(err=>{
+ const main=document.querySelector('main');
+ if(main){
+   main.innerHTML='<div class="stat"><b>儀表板載入失敗</b><div class="muted" style="margin-top:8px;white-space:pre-wrap">'+
+     String(err&&err.message?err.message:err)+'</div></div>';
+ }
+ console.error('Shopee Dashboard load failed:',err);
 });
 </script></body></html>
