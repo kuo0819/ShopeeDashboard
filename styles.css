@@ -13,7 +13,7 @@
 html{scroll-behavior:smooth}
 body{
   font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  margin:0;background:var(--bg);color:var(--text);
+  margin:0;background:var(--bg);color:var(--text);overflow-x:hidden;
 }
 button,input,select{font:inherit}
 button{touch-action:manipulation}
@@ -184,7 +184,7 @@ main{max-width:1500px;margin:auto;padding:14px 16px 80px}
   }
   .pagination .number-page{display:none}
   .pagination .number-page.active{display:inline-flex}
-  .page-btn{min-height:42px;min-width:54px}
+  .page-btn{min-height:44px;min-width:58px}
   .modal{padding:0;display:none;align-items:flex-end}
   .modal.open{display:flex}
   .modal-panel{
