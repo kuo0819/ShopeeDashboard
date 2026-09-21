@@ -24,7 +24,9 @@ header{
 .header-inner{max-width:1500px;margin:auto;padding:12px 16px}
 .topline{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
 h1{font-size:20px;margin:0}
-.db-count{font-size:13px;color:var(--muted);white-space:nowrap}
+.top-meta{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:8px;min-width:0}
+.db-count,.db-updated{font-size:13px;color:var(--muted);white-space:nowrap}
+.db-updated{padding-left:8px;border-left:1px solid var(--line)}
 .controls{display:flex;flex-direction:column;gap:8px}
 .primary-controls{
   display:grid;grid-template-columns:minmax(240px,2fr) repeat(3,minmax(130px,1fr)) auto;gap:8px;
@@ -150,8 +152,10 @@ main{max-width:1500px;margin:auto;padding:14px 16px 80px}
 @media(max-width:720px){
   header{position:static}
   .header-inner{padding:10px}
-  .topline{align-items:flex-start}
+  .topline{align-items:flex-start;flex-wrap:wrap}
   h1{font-size:18px}
+  .top-meta{width:100%;justify-content:flex-start;gap:6px}
+  .db-updated{padding-left:6px}
   .primary-controls{grid-template-columns:1fr 1fr;gap:7px}
   .primary-controls #q{grid-column:1/-1}
   .advanced-controls{grid-template-columns:1fr 1fr;gap:7px}
