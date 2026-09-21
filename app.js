@@ -1,5 +1,5 @@
 Promise.all([
-  fetch('catalog-head.json').then(function(r){ if(!r.ok) throw new Error('catalog-head '+r.status); return r.json(); }),
+  fetch('catalog-head.json').then(function(r){ if(r.ok) return r.json(); return fetch('catalog.json').then(function(full){ if(!full.ok) throw new Error('catalog '+full.status); return full.json(); }); }),
   fetch('snapshot.json').then(function(r){ if(!r.ok) throw new Error('snapshot '+r.status); return r.json(); })
 ]).then(function(payload){
   var catalog=payload[0], snap=payload[1];
