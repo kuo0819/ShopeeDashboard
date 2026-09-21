@@ -42,6 +42,7 @@ Promise.all([
   }
 
   $('dbCount').textContent='資料庫 '+num(snap.database_products)+' 筆';
+  $('dbUpdated').textContent='更新：'+dt(snap.generated_at);
   $('perPage').value=String(perPage);
   $('stats').innerHTML=[
     ['資料庫商品',snap.database_products],['本輪抓到',snap.captured_products],
