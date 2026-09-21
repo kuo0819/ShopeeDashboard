@@ -1,5 +1,5 @@
 Promise.all([
-  fetch('catalog.json').then(function(r){ if(!r.ok) throw new Error('catalog '+r.status); return r.json(); }),
+  fetch('catalog-head.json').then(function(r){ if(!r.ok) throw new Error('catalog-head '+r.status); return r.json(); }),
   fetch('snapshot.json').then(function(r){ if(!r.ok) throw new Error('snapshot '+r.status); return r.json(); })
 ]).then(function(payload){
   var catalog=payload[0], snap=payload[1];
@@ -423,6 +423,29 @@ Promise.all([
   var hashPage=Number((location.hash.match(/page=(\d+)/)||[])[1]||1);
   currentPage=Math.max(1,hashPage);
   applyFilters(false);
+  $('resultText').textContent='先顯示精選商品，完整資料背景載入中…';
+  fetch('catalog.json').then(function(r){
+    if(!r.ok) throw new Error('catalog '+r.status);
+    return r.json();
+  }).then(function(fullCatalog){
+    catalog=fullCatalog;
+    var allCategories=[...new Set(catalog.map(function(x){
+      return (x.category_path||'未分類').split('>')[0].trim();
+    }).filter(Boolean))].sort();
+    $('cat').innerHTML='<option value="">全部分類</option>'+allCategories.map(function(x){
+      return '<option value="'+esc(x)+'">'+esc(x)+'</option>';
+    }).join('');
+    var allLocations=[...new Set(catalog.map(function(x){
+      return String(x.shop_location||'').trim();
+    }).filter(Boolean))].sort();
+    $('location').innerHTML='<option value="">全部地區</option>'+allLocations.map(function(x){
+      return '<option value="'+esc(x)+'">'+esc(x)+'</option>';
+    }).join('');
+    applyFilters(false);
+  }).catch(function(err){
+    $('resultText').textContent='目前顯示精選商品；完整資料載入失敗，請重新整理。';
+    console.warn(err);
+  });
 
 }).catch(function(err){
   var main=document.querySelector('main');
