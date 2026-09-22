@@ -40,6 +40,20 @@ Promise.all([
       blocked:'🔴 不可分潤',retry:'🔵 待重試'
     }[statusGroup(x)]||'尚未判定';
   }
+  function shortVideoGroup(x){
+    if(x&&((x.has_short_video===true)||Number(x.has_short_video)===1))return 'ready';
+    var s=String((x&&x.short_video_status)||'').trim().toLowerCase();
+    if(['ready','success','completed','complete','done','有短影音','已完成'].includes(s))return 'ready';
+    if(['processing','running','pending','製作中','待處理'].includes(s))return 'processing';
+    if(['failed','failure','error','失敗'].includes(s))return 'failed';
+    return 'none';
+  }
+  function shortVideoLabel(x){
+    return {
+      ready:'🎬 已完成短影音',processing:'🎬 製作中',
+      failed:'🎬 製作失敗',none:'🎬 尚未製作'
+    }[shortVideoGroup(x)];
+  }
 
   $('dbCount').textContent='資料庫 '+num(snap.database_products)+' 筆';
   $('dbUpdated').textContent='更新：'+dt(snap.generated_at);
@@ -81,6 +95,7 @@ Promise.all([
     var reviewMin=Number($('reviewMin').value||0);
     var stockFilter=$('stockFilter').value;
     var discountFilter=$('discountFilter').value;
+    var videoFilter=$('videoFilter').value;
     var min=Number($('min').value||0);
     var sort=$('sort').value;
 
@@ -109,6 +124,11 @@ Promise.all([
       if(stockFilter==='in')return stock>0;
       return true;
     }
+    function videoOk(x){
+      if(!videoFilter)return true;
+      var group=shortVideoGroup(x);
+      return videoFilter==='missing'?group!=='ready':group===videoFilter;
+    }
 
     filtered=catalog.filter(function(x){
       return Number(x.selection_score||0)>=min &&
@@ -119,6 +139,7 @@ Promise.all([
         priceOk(x.price) &&
         shopOk(x) &&
         stockOk(x) &&
+        videoOk(x) &&
         (!location||String(x.shop_location||'')===location) &&
         (!discountFilter||
           (discountFilter==='discounted'&&Number(x.discount||0)>0)||
@@ -147,7 +168,7 @@ Promise.all([
 
   function updateFilterCount(){
     var ids=['aff','cat','shopType','location','priceRange','monthlyMin','soldMin',
-      'ratingMin','reviewMin','stockFilter','discountFilter','min'];
+      'ratingMin','reviewMin','stockFilter','discountFilter','videoFilter','min'];
     var defaults={monthlyMin:'0',soldMin:'0',ratingMin:'0',reviewMin:'0',min:'55'};
     var count=ids.reduce(function(total,id){
       var value=String($(id).value||'');
@@ -184,6 +205,7 @@ Promise.all([
             '<div class="name">'+esc(x.product_name)+'</div>'+
             '<div class="muted category">'+esc(x.category_path||'未分類')+'</div>'+
             '<div class="badges"><span class="badge">'+statusLabel(x)+'</span>'+
+            '<span class="badge">'+shortVideoLabel(x)+'</span>'+
             '<span class="badge">月銷 '+num(x.sold)+'</span>'+
             '<span class="badge">累積 '+num(x.historical_sold)+'</span>'+
             '<span class="badge">⭐ '+Number(x.rating||0).toFixed(2)+'</span></div>'+
@@ -270,6 +292,7 @@ Promise.all([
         '<div>'+
           '<div class="muted">'+esc(x.category_path||'未分類')+'</div>'+
           '<div class="badges"><span class="badge">'+statusLabel(x)+'</span>'+
+            '<span class="badge">'+shortVideoLabel(x)+'</span>'+
             (x.is_mall?'<span class="badge">商城</span>':'')+
             (x.is_preferred?'<span class="badge">優選</span>':'')+
           '</div>'+
@@ -304,6 +327,12 @@ Promise.all([
         detailItem('狀態',statusLabel(x))+
         detailItem('嘗試次數',num(x.affiliate_attempts))+
         detailItem('原因',x.affiliate_status_reason||'-')+
+      '</div></div>'+
+      '<div class="detail-section"><h3>短影音狀態</h3><div class="detail-grid">'+
+        detailItem('製作狀態',shortVideoLabel(x))+
+        detailItem('檔案名稱',x.short_video_file||'-')+
+        detailItem('完成時間',dt(x.short_video_updated_at))+
+        detailItem('錯誤訊息',x.short_video_error||'-')+
       '</div></div>'+
       '<div class="detail-section"><h3>歷史銷量變化</h3>'+historySection(x)+'</div>'+
       '<div class="detail-section"><h3>關鍵字</h3><div class="muted">'+esc(keywords||'-')+'</div></div>'+
@@ -384,7 +413,7 @@ Promise.all([
   document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDetail()});
 
   ['aff','cat','sort','shopType','location','priceRange','monthlyMin','soldMin',
-    'ratingMin','reviewMin','stockFilter','discountFilter','min'].forEach(function(id){
+    'ratingMin','reviewMin','stockFilter','discountFilter','videoFilter','min'].forEach(function(id){
     $(id).addEventListener('change',function(){applyFilters(true)});
   });
   $('perPage').addEventListener('change',function(){
@@ -411,6 +440,7 @@ Promise.all([
     $('reviewMin').value='0';
     $('stockFilter').value='';
     $('discountFilter').value='';
+    $('videoFilter').value='';
     $('min').value='55';
     perPage=window.innerWidth<=720?20:40;
     $('perPage').value=String(perPage);
