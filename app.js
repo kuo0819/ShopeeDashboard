@@ -54,6 +54,19 @@ Promise.all([
       failed:'🎬 製作失敗',none:'🎬 尚未製作'
     }[shortVideoGroup(x)];
   }
+  function nativeVideoGroup(x){
+    var s=String((x&&x.shopee_video_status)||'').trim().toLowerCase();
+    if(['yes','true','1','有','已有短影音'].includes(s))return 'yes';
+    if(['no','false','0','無','沒有短影音'].includes(s))return 'no';
+    return 'unknown';
+  }
+  function nativeVideoLabel(x){
+    return {
+      yes:'📱 蝦皮頁面已有短影音',
+      no:'📱 蝦皮頁面沒有短影音',
+      unknown:'📱 尚未檢查蝦皮頁面'
+    }[nativeVideoGroup(x)];
+  }
 
   $('dbCount').textContent='資料庫 '+num(snap.database_products)+' 筆';
   $('dbUpdated').textContent='更新：'+dt(snap.generated_at);
@@ -96,6 +109,7 @@ Promise.all([
     var stockFilter=$('stockFilter').value;
     var discountFilter=$('discountFilter').value;
     var videoFilter=$('videoFilter').value;
+    var nativeVideoFilter=$('nativeVideoFilter').value;
     var min=Number($('min').value||0);
     var sort=$('sort').value;
 
@@ -129,6 +143,14 @@ Promise.all([
       var group=shortVideoGroup(x);
       return videoFilter==='missing'?group!=='ready':group===videoFilter;
     }
+    function nativeVideoOk(x){
+      if(!nativeVideoFilter)return true;
+      var group=nativeVideoGroup(x);
+      if(nativeVideoFilter==='opportunity'){
+        return group==='no' && shortVideoGroup(x)!=='ready';
+      }
+      return group===nativeVideoFilter;
+    }
 
     filtered=catalog.filter(function(x){
       return Number(x.selection_score||0)>=min &&
@@ -140,6 +162,7 @@ Promise.all([
         shopOk(x) &&
         stockOk(x) &&
         videoOk(x) &&
+        nativeVideoOk(x) &&
         (!location||String(x.shop_location||'')===location) &&
         (!discountFilter||
           (discountFilter==='discounted'&&Number(x.discount||0)>0)||
@@ -168,7 +191,7 @@ Promise.all([
 
   function updateFilterCount(){
     var ids=['aff','cat','shopType','location','priceRange','monthlyMin','soldMin',
-      'ratingMin','reviewMin','stockFilter','discountFilter','videoFilter','min'];
+      'ratingMin','reviewMin','stockFilter','discountFilter','videoFilter','nativeVideoFilter','min'];
     var defaults={monthlyMin:'0',soldMin:'0',ratingMin:'0',reviewMin:'0',min:'55'};
     var count=ids.reduce(function(total,id){
       var value=String($(id).value||'');
@@ -206,6 +229,7 @@ Promise.all([
             '<div class="muted category">'+esc(x.category_path||'未分類')+'</div>'+
             '<div class="badges"><span class="badge">'+statusLabel(x)+'</span>'+
             '<span class="badge">'+shortVideoLabel(x)+'</span>'+
+            '<span class="badge">'+nativeVideoLabel(x)+'</span>'+
             '<span class="badge">月銷 '+num(x.sold)+'</span>'+
             '<span class="badge">累積 '+num(x.historical_sold)+'</span>'+
             '<span class="badge">⭐ '+Number(x.rating||0).toFixed(2)+'</span></div>'+
@@ -329,10 +353,18 @@ Promise.all([
         detailItem('原因',x.affiliate_status_reason||'-')+
       '</div></div>'+
       '<div class="detail-section"><h3>短影音狀態</h3><div class="detail-grid">'+
-        detailItem('製作狀態',shortVideoLabel(x))+
+        detailItem('我方製作狀態',shortVideoLabel(x))+
         detailItem('檔案名稱',x.short_video_file||'-')+
         detailItem('完成時間',dt(x.short_video_updated_at))+
         detailItem('錯誤訊息',x.short_video_error||'-')+
+      '</div></div>'+
+      '<div class="detail-section"><h3>蝦皮商品頁原生短影音</h3><div class="detail-grid">'+
+        detailItem('頁面狀態',nativeVideoLabel(x))+
+        detailItem('影片數',x.shopee_video_count==null?'-':num(x.shopee_video_count))+
+        detailItem('檢查時間',dt(x.shopee_video_checked_at))+
+        detailItem('檢查來源',x.shopee_video_source||'-')+
+        detailItem('錯誤訊息',x.shopee_video_error||'-')+
+        detailItem('短影音機會',nativeVideoGroup(x)==='no'&&shortVideoGroup(x)!=='ready'?'是':'否')+
       '</div></div>'+
       '<div class="detail-section"><h3>歷史銷量變化</h3>'+historySection(x)+'</div>'+
       '<div class="detail-section"><h3>關鍵字</h3><div class="muted">'+esc(keywords||'-')+'</div></div>'+
@@ -413,7 +445,7 @@ Promise.all([
   document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDetail()});
 
   ['aff','cat','sort','shopType','location','priceRange','monthlyMin','soldMin',
-    'ratingMin','reviewMin','stockFilter','discountFilter','videoFilter','min'].forEach(function(id){
+    'ratingMin','reviewMin','stockFilter','discountFilter','videoFilter','nativeVideoFilter','min'].forEach(function(id){
     $(id).addEventListener('change',function(){applyFilters(true)});
   });
   $('perPage').addEventListener('change',function(){
@@ -441,6 +473,7 @@ Promise.all([
     $('stockFilter').value='';
     $('discountFilter').value='';
     $('videoFilter').value='';
+    $('nativeVideoFilter').value='';
     $('min').value='55';
     perPage=window.innerWidth<=720?20:40;
     $('perPage').value=String(perPage);
