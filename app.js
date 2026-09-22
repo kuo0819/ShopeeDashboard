@@ -75,7 +75,7 @@ Promise.all([
     ['資料庫商品',snap.database_products],['本輪抓到',snap.captured_products],
     ['尚未判定',snap.affiliate_unknown],['待測試',snap.affiliate_queued],
     ['已驗證可分潤',snap.affiliate_ready],['留言池',snap.threads_ready],
-    ['高分商品',snap.high_score_products],['蝦皮頁面無影片',snap.shopee_video_no||0],['分類數',snap.category_count],
+    ['高分商品',snap.high_score_products],['蝦皮頁面無影片',snap.shopee_video_no||0],['尚未檢查蝦皮頁面',snap.shopee_video_unknown||0],['分類數',snap.category_count],
     ['已掃分類',snap.category_completed],['更新時間',new Date(snap.generated_at).toLocaleString()]
   ].map(function(x){
     return '<div class="stat"><span>'+esc(x[0])+'</span><b>'+esc(x[1])+'</b></div>';
