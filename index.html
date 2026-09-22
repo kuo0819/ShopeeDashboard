@@ -108,11 +108,18 @@
           <option value="none">無折扣</option>
         </select>
         <select id="videoFilter">
-          <option value="">全部短影音狀態</option>
-          <option value="missing">尚未製作短影音</option>
-          <option value="ready">已完成短影音</option>
-          <option value="processing">短影音製作中</option>
-          <option value="failed">短影音製作失敗</option>
+          <option value="">全部我方短影音狀態</option>
+          <option value="missing">我方尚未製作短影音</option>
+          <option value="ready">我方已完成短影音</option>
+          <option value="processing">我方短影音製作中</option>
+          <option value="failed">我方短影音製作失敗</option>
+        </select>
+        <select id="nativeVideoFilter">
+          <option value="">全部蝦皮頁面短影音</option>
+          <option value="opportunity">短影音機會：蝦皮無＋我方未製作</option>
+          <option value="no">蝦皮頁面沒有短影音</option>
+          <option value="yes">蝦皮頁面已有短影音</option>
+          <option value="unknown">尚未檢查蝦皮頁面</option>
         </select>
         <select id="min">
           <option value="0">選品分數不限</option>
